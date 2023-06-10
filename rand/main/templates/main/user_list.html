@@ -1,0 +1,9 @@
+LIST <br> <br>
+
+{% for item in items %}
+    {{ item }} <br> <br>
+{% endfor %}
+
+<a href="{% url 'index' %}">
+    <input type="button" value="BACK TO MAIN PAGE">
+</a>
