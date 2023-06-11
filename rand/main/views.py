@@ -7,10 +7,21 @@ from django.core.paginator import Paginator, EmptyPage
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import ListView
 
 from .forms import LoginForm, SignupForm, TopicsForm, UserForm
 from .models import Topics
 
+class TopicsList(ListView):
+    model = Topics
+    template_name = 'main/user_list.html'
+    context_object_name = 'topics'
+    paginate_by = 10
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        return context
 
 def index(request):
     if request.user.is_authenticated:

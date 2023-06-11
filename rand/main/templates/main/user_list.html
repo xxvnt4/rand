@@ -1,20 +1,24 @@
 LIST <br> <br> <br>
 
-{% if pages_amount > 1 %}
-    {% for page in range_page %}
+{% if is_paginated %}
+    {% for page in paginator.page_range %}
         <a href="{% url 'user_list' %}?page={{ page }}">
             <input type="button" value="{{ page }}">
         </a>
     {% endfor %}
 
-    {% if topics.has_previous %}
-        <a href="{% url 'user_list' %}?page={{ topics.previous_page_number }}">
+    {% if page_obj.has_previous %}
+        <a href="{% url 'user_list' %}?page={{ page_obj.previous_page_number }}">
             <input type="button" value="PREVIOUS">
-        </a> {% if not topics.has_next %} <br> <br> <br> {% endif %}
+        </a>
+
+        {% if not page_obj.has_next %}
+            <br> <br> <br>
+        {% endif %}
     {% endif %}
 
-    {% if topics.has_next %}
-        <a href="{% url 'user_list' %}?page={{ topics.next_page_number }}">
+    {% if page_obj.has_next %}
+        <a href="{% url 'user_list' %}?page={{ page_obj.next_page_number }}">
             <input type="button" value="NEXT"> <br> <br> <br>
         </a>
     {% endif %}
@@ -25,7 +29,7 @@ LIST <br> <br> <br>
         ●
     {% endif %}
 
-    <a href="{% url 'topic_info' id=topic.id %}">
+    <a href="{{ topic.get_absolute_url }}">
         <input type="button" value="{{ topic }}">
     </a> <br> <br>
 {% endfor %} <br> <br>
