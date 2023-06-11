@@ -104,3 +104,20 @@ class TopicsForm(forms.ModelForm):
 
     def clean_link(self):
         return self.cleaned_data['link']
+
+
+class UserForm(forms.ModelForm):
+
+    class Meta:
+        model = User
+        fields = ['username']
+        widgets = {
+            'username': forms.TextInput(
+                attrs={
+                    'placeholder': 'NEW USERNAME'
+                }
+            )
+        }
+
+    def clean_username(self):
+        return self.cleaned_data['username']

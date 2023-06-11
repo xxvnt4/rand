@@ -1,10 +1,14 @@
-LIST <br> <br>
+LIST <br> <br> <br>
 
 {% for item in items %}
     <a href="{% url 'topic_info' id=item.id %}">
         <input type="button" value="{{ item }}">
     </a> <br> <br>
-{% endfor %}
+{% endfor %} <br>
+
+<a href="{% url 'user_list' %}">
+    <input type="button" value="ADD TOPIC">
+</a> <br> <br>
 
 <a href="{% url 'index' %}">
     <input type="button" value="HOME">

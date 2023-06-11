@@ -2,13 +2,13 @@ from datetime import datetime
 from random import choice
 
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponse, HttpResponseRedirect
+from django.contrib.auth.models import User
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 
-from .forms import LoginForm, SignupForm, TopicsForm
-
+from .forms import LoginForm, SignupForm, TopicsForm, UserForm
 from .models import Topics
 
 
@@ -65,6 +65,7 @@ def user_login(request):
             }
         )
 
+
 def user_signup(request):
     if request.user.is_authenticated:
         return redirect('index')
@@ -105,6 +106,9 @@ def user_logout(request):
 def user_list(request):
     if request.user.is_authenticated:
         items = Topics.objects.filter(author=request.user)
+
+        if len(items) <= 1:
+            return redirect('add_topic')
 
         return render(
             request,
@@ -148,6 +152,10 @@ def add_topic(request):
 def random(request):
     if request.user.is_authenticated:
         all_ids = list(Topics.objects.values_list('id', flat=True))
+
+        if len(all_ids) <= 1:
+            return redirect('add_topic')
+
         random_id = choice(all_ids)
 
         random_topic = Topics.objects.get(id=random_id)
@@ -158,9 +166,10 @@ def random(request):
 
     return redirect('user_login')
 
+
 def topic_info(request, id):
     if request.user.is_authenticated:
-        topic = Topics.objects.filter(id=id) [0]
+        topic = Topics.objects.filter(id=id)[0]
         return render(
             request,
             'main/topic_info.html',
@@ -214,7 +223,57 @@ def confirm_delete_topic(request, id):
 
 
 def delete_topic(request, id):
-    topic = Topics.objects.get(id=id)
-    topic.delete()
+    if request.user.is_authenticated:
+        topic = Topics.objects.get(id=id)
+        topic.delete()
 
-    return redirect('user_list')
+        return redirect('user_list')
+
+    return redirect('user_login')
+
+
+def settings(request):
+    if request.user.is_authenticated:
+        return render(request, 'main/settings.html')
+
+    return redirect('user_login')
+
+
+def change_username(request):
+    if request.user.is_authenticated:
+        user = User.objects.get(username=request.user)
+
+        if request.method == 'POST':
+            form = UserForm(request.POST, instance=user)
+
+            if form.is_valid():
+                form.save()
+                user.save()
+
+                return redirect('settings')
+
+        form = UserForm(instance=user)
+
+        return render(
+            request,
+            'main/change_username.html',
+            {
+                'form': form
+            }
+        )
+    return redirect('user_login')
+
+
+def confirm_delete_profile(request):
+    if request.user.is_authenticated:
+        return render(request, 'main/confirm_delete_profile.html')
+
+    return redirect('user_login')
+
+
+def delete_profile(request):
+    if request.user.is_authenticated:
+        user = User.objects.get(username=request.user)
+        user.delete()
+
+    return redirect('user_login')

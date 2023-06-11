@@ -1,3 +1,5 @@
+ADD TOPIC <br> <br> <br>
+
 <form method="POST">
     {% csrf_token %}
 
@@ -5,7 +7,8 @@
     {{ form.subtitle }} <br> <br>
     {{ form.description }} <br> <br>
     {{ form.link }} <br> <br>
-    <input type="submit" value="SAVE"> <br> <br>
+
+    <input type="submit" value="SAVE"> <br> <br> <br>
 
     <a href="{% url 'index' %}">
         <input type="button" value="HOME">

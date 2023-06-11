@@ -1,0 +1,18 @@
+SETTINGS - {{ user }} <br> <br> <br>
+
+<form method="POST">
+    {% csrf_token %}
+
+    {{ form.username }} <br> <br>
+
+    <input type="submit" value="SAVE">
+
+</form>
+
+<a href="{% url 'settings' %}">
+    <input type="button" value="BACK">
+</a> <br> <br>
+
+<a href="{% url 'index' %}">
+    <input type="button" value="HOME">
+</a>

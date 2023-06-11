@@ -14,4 +14,8 @@ urlpatterns = [
     path('edit_topic/<id>/', views.edit_topic, name='edit_topic'),
     path('confirm_delete_topic/<id>', views.confirm_delete_topic, name='confirm_delete_topic'),
     path('delete_topic/<id>', views.delete_topic, name='delete_topic'),
+    path('settings/', views.settings, name='settings'),
+    path('change_username/', views.change_username, name='change_username'),
+    path('confirm_delete_profile/', views.confirm_delete_profile, name='confirm_delete_profile'),
+    path('delete_profile/', views.delete_profile, name='delete_profile'),
 ]
