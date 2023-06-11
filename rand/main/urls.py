@@ -12,5 +12,6 @@ urlpatterns = [
     path('random/', views.random, name='random'),
     path('topic_info/<id>/', views.topic_info, name='topic_info'),
     path('edit_topic/<id>/', views.edit_topic, name='edit_topic'),
+    path('confirm_delete_topic/<id>', views.confirm_delete_topic, name='confirm_delete_topic'),
     path('delete_topic/<id>', views.delete_topic, name='delete_topic'),
 ]

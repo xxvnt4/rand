@@ -15,8 +15,8 @@ from .models import Topics
 def index(request):
     if request.user.is_authenticated:
         return render(request, 'main/index.html')
-    else:
-        return redirect('user_login')
+
+    return redirect('user_login')
 
 
 def user_login(request):
@@ -98,6 +98,7 @@ def user_signup(request):
 def user_logout(request):
     if request.user.is_authenticated:
         logout(request)
+
     return redirect('user_login')
 
 
@@ -112,8 +113,8 @@ def user_list(request):
                 'items': items
             }
         )
-    else:
-        return redirect('user_login')
+
+    return redirect('user_login')
 
 
 @csrf_exempt
@@ -140,8 +141,8 @@ def add_topic(request):
                 'form': form
             }
         )
-    else:
-        return redirect('user_login')
+
+    return redirect('user_login')
 
 
 def random(request):
@@ -154,8 +155,8 @@ def random(request):
         random_topic.save()
 
         return redirect(reverse('topic_info', args=[random_id]))
-    else:
-        return redirect('user_login')
+
+    return redirect('user_login')
 
 def topic_info(request, id):
     if request.user.is_authenticated:
@@ -167,10 +168,11 @@ def topic_info(request, id):
                 'topic': topic
             }
         )
-    else:
-        return redirect('user_login')
+
+    return redirect('user_login')
 
 
+@csrf_exempt
 def edit_topic(request, id):
     if request.user.is_authenticated:
         topic = Topics.objects.get(id=id)
@@ -194,12 +196,25 @@ def edit_topic(request, id):
                 'form': form
             }
         )
-    else:
-        return redirect('user_login')
+
+    return redirect('user_login')
+
+
+def confirm_delete_topic(request, id):
+    if request.user.is_authenticated:
+        topic = Topics.objects.get(id=id)
+
+        return render(
+            request,
+            'main/confirm_delete.html',
+            {'topic': topic}
+        )
+
+    return redirect('user_login')
 
 
 def delete_topic(request, id):
-    if request.user.is_authenticated:
-        return HttpResponse('DELETE')
-    else:
-        return redirect('user_login')
+    topic = Topics.objects.get(id=id)
+    topic.delete()
+
+    return redirect('user_list')

@@ -20,8 +20,13 @@ Date Watched: {{ topic.date_watched }} <br> <br>
     <input type="button" value="EDIT">
 </a> <br> <br>
 
-<a href="{% url 'confirm_delete_topic' id=topic.id %}">
-    <input type="button" value="DELETE">
+Are you sure?
+<a href="{% url 'delete_topic' id=topic.id %}">
+    <input type="button" value="YES">
+</a>
+
+<a href="{% url 'topic_info' id=topic.id %}">
+    <input type="button" value="NO">
 </a> <br> <br>
 
 <a href="{% url 'index' %}">
