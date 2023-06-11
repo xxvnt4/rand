@@ -4,7 +4,7 @@ from random import choice
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
@@ -108,7 +108,7 @@ def user_list(request):
     if request.user.is_authenticated:
         topics = Topics.objects.filter(author=request.user).order_by('-date_created')
 
-        if len(topics) <= 1:
+        if len(topics) == 0:
             return redirect('add_topic')
 
         pagination = Paginator(topics, 5)
@@ -164,15 +164,21 @@ def add_topic(request):
 
 def random(request):
     if request.user.is_authenticated:
-        all_ids = list(Topics.objects.values_list('id', flat=True))
+        topics = Topics.objects.filter(author=request.user)
 
-        if len(all_ids) <= 1:
+        if len(topics) <= 1:
             return redirect('add_topic')
 
-        random_id = choice(all_ids)
+        available_ids = list(Topics.objects.filter(is_watched=False).values_list('id', flat=True))
+
+        if len(available_ids) == 0:
+            return redirect('confirm_reset_random')
+
+        random_id = choice(available_ids)
 
         random_topic = Topics.objects.get(id=random_id)
         random_topic.date_watched = datetime.now()
+        random_topic.is_watched = True
         random_topic.save()
 
         return redirect(reverse('topic_info', args=[random_id]))
@@ -290,3 +296,20 @@ def delete_profile(request):
         user.delete()
 
     return redirect('user_login')
+
+
+def confirm_reset_random(request):
+    return render(
+        request,
+        'main/confirm_reset_random.html'
+    )
+
+def reset_random(request):
+    topics = Topics.objects.all()
+
+    for topic in topics:
+        topic.is_watched = False
+        topic.save()
+
+    return redirect('random')
+

@@ -18,4 +18,6 @@ urlpatterns = [
     path('change_username/', views.change_username, name='change_username'),
     path('confirm_delete_profile/', views.confirm_delete_profile, name='confirm_delete_profile'),
     path('delete_profile/', views.delete_profile, name='delete_profile'),
+    path('confirm_reset_random/', views.confirm_reset_random, name='confirm_reset_random'),
+    path('reset_random/', views.reset_random, name='reset_random'),
 ]

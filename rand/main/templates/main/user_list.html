@@ -1,6 +1,5 @@
 LIST <br> <br> <br>
 
-
 {% if pages_amount > 1 %}
     {% for page in range_page %}
         <a href="{% url 'user_list' %}?page={{ page }}">
@@ -22,9 +21,13 @@ LIST <br> <br> <br>
 {% endif %}
 
 {% for topic in topics %}
+    {% if topic.is_watched %}
+        ●
+    {% endif %}
+
     <a href="{% url 'topic_info' id=topic.id %}">
-        <input type="button" value="{{ topic }}"> <br> <br>
-    </a>
+        <input type="button" value="{{ topic }}">
+    </a> <br> <br>
 {% endfor %} <br> <br>
 
 <a href="{% url 'add_topic' %}">

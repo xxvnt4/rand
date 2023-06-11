@@ -1,3 +1,5 @@
+SIGNUP <br> <br> <br>
+
 <form method="POST">
     {% csrf_token %}
 
@@ -5,7 +7,7 @@
     {{ form.password }} <br> <br>
     {{ form.password_check }} <br> <br>
 
-    <input type="submit" value="SIGNUP"> <br> <br>
+    <input type="submit" value="SIGNUP"> <br> <br> <br>
     <a href="{% url 'user_login' %}">
         <input type="button" value="BACK TO LOGIN">
     </a>

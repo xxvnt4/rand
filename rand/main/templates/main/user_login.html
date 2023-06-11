@@ -1,3 +1,5 @@
+LOGIN <br> <br> <br>
+
 <form method="POST">
     {% csrf_token %}
 
@@ -5,7 +7,7 @@
 
     {{ form.password }} <br> <br>
 
-    <input type="submit" value="LOGIN"> <br> <br>
+    <input type="submit" value="LOGIN"> <br> <br> <br>
 
     <a href="{% url 'user_signup' %}">
         <input type="button" value="NO ACCOUNT YET?">
