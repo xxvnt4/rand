@@ -1,12 +1,33 @@
 LIST <br> <br> <br>
 
-{% for item in items %}
-    <a href="{% url 'topic_info' id=item.id %}">
-        <input type="button" value="{{ item }}">
-    </a> <br> <br>
-{% endfor %} <br>
 
-<a href="{% url 'user_list' %}">
+{% if pages_amount > 1 %}
+    {% for page in range_page %}
+        <a href="{% url 'user_list' %}?page={{ page }}">
+            <input type="button" value="{{ page }}">
+        </a>
+    {% endfor %}
+
+    {% if topics.has_previous %}
+        <a href="{% url 'user_list' %}?page={{ topics.previous_page_number }}">
+            <input type="button" value="PREVIOUS">
+        </a> {% if not topics.has_next %} <br> <br> <br> {% endif %}
+    {% endif %}
+
+    {% if topics.has_next %}
+        <a href="{% url 'user_list' %}?page={{ topics.next_page_number }}">
+            <input type="button" value="NEXT"> <br> <br> <br>
+        </a>
+    {% endif %}
+{% endif %}
+
+{% for topic in topics %}
+    <a href="{% url 'topic_info' id=topic.id %}">
+        <input type="button" value="{{ topic }}"> <br> <br>
+    </a>
+{% endfor %} <br> <br>
+
+<a href="{% url 'add_topic' %}">
     <input type="button" value="ADD TOPIC">
 </a> <br> <br>
 

@@ -3,6 +3,7 @@ from random import choice
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from django.core.paginator import Paginator, EmptyPage
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -105,16 +106,28 @@ def user_logout(request):
 
 def user_list(request):
     if request.user.is_authenticated:
-        items = Topics.objects.filter(author=request.user)
+        topics = Topics.objects.filter(author=request.user).order_by('-date_created')
 
-        if len(items) <= 1:
+        if len(topics) <= 1:
             return redirect('add_topic')
+
+        pagination = Paginator(topics, 5)
+        pages_amount = pagination.num_pages
+        pages_num = request.GET.get('page', 1)
+        range_page = pagination.page_range
+
+        try:
+            page = pagination.page(pages_num)
+        except EmptyPage:
+            page = pagination.page(1)
 
         return render(
             request,
             'main/user_list.html',
             {
-                'items': items
+                'topics': page,
+                'pages_amount': pages_amount,
+                'range_page': range_page
             }
         )
 

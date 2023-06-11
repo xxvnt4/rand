@@ -12,11 +12,11 @@ TOPIC <br> <br> <br>
 
 {% if topic.link %}
     {{ topic.link }} <br> <br>
-{% endif %}
+{% endif %} <br>
 
 Created -- {{ topic.date_created }} <br> <br>
 Updated -- {{ topic.date_updated }} <br> <br>
-Watched -- {{ topic.date_watched }} <br> <br>
+Watched -- {{ topic.date_watched }} <br> <br> <br>
 
 <a href="{% url 'edit_topic' id=topic.id %}">
     <input type="button" value="EDIT">
