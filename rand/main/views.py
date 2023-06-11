@@ -1,8 +1,13 @@
-from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponse
-from django.shortcuts import redirect, render
+from datetime import datetime
+from random import choice
 
-from .forms import LoginForm, SignupForm
+from django.contrib.auth import authenticate, login, logout
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import redirect, render
+from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
+
+from .forms import LoginForm, SignupForm, TopicsForm
 
 from .models import Topics
 
@@ -108,4 +113,93 @@ def user_list(request):
             }
         )
     else:
-        return redirect('user_list')
+        return redirect('user_login')
+
+
+@csrf_exempt
+def add_topic(request):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+
+            form = TopicsForm(request.POST)
+
+            if form.is_valid():
+                instance = form.save(commit=False)
+                instance.author = request.user
+                instance.save()
+                return redirect('user_list')
+            else:
+                error = 'Error!'
+
+        form = TopicsForm()
+
+        return render(
+            request,
+            'main/add_topic.html',
+            {
+                'form': form
+            }
+        )
+    else:
+        return redirect('user_login')
+
+
+def random(request):
+    if request.user.is_authenticated:
+        all_ids = list(Topics.objects.values_list('id', flat=True))
+        random_id = choice(all_ids)
+
+        random_topic = Topics.objects.get(id=random_id)
+        random_topic.date_watched = datetime.now()
+        random_topic.save()
+
+        return redirect(reverse('topic_info', args=[random_id]))
+    else:
+        return redirect('user_login')
+
+def topic_info(request, id):
+    if request.user.is_authenticated:
+        topic = Topics.objects.filter(id=id) [0]
+        return render(
+            request,
+            'main/topic_info.html',
+            {
+                'topic': topic
+            }
+        )
+    else:
+        return redirect('user_login')
+
+
+def edit_topic(request, id):
+    if request.user.is_authenticated:
+        topic = Topics.objects.get(id=id)
+
+        if request.method == 'POST':
+            form = TopicsForm(request.POST, instance=topic)
+            if form.is_valid():
+                form.save()
+                topic.date_updated = datetime.now()
+                topic.save()
+
+                return redirect(reverse('topic_info', args=[id]))
+
+        form = TopicsForm(instance=topic)
+
+        return render(
+            request,
+            'main/edit_topic.html',
+            {
+                'id': id,
+                'form': form
+            }
+        )
+    else:
+        return redirect('user_login')
+
+
+def delete_topic(request, id):
+    if request.user.is_authenticated:
+        return HttpResponse('DELETE')
+    else:
+        return redirect('user_login')

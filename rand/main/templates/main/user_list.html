@@ -1,9 +1,11 @@
 LIST <br> <br>
 
 {% for item in items %}
-    {{ item }} <br> <br>
+    <a href="{% url 'topic_info' id=item.id %}">
+        <input type="button" value="{{ item }}">
+    </a> <br> <br>
 {% endfor %}
 
 <a href="{% url 'index' %}">
-    <input type="button" value="BACK TO MAIN PAGE">
+    <input type="button" value="HOME">
 </a>
