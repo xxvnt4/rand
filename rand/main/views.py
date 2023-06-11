@@ -4,7 +4,6 @@ from random import choice
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage
-from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
@@ -304,6 +303,7 @@ def confirm_reset_random(request):
         'main/confirm_reset_random.html'
     )
 
+
 def reset_random(request):
     topics = Topics.objects.all()
 
@@ -312,4 +312,3 @@ def reset_random(request):
         topic.save()
 
     return redirect('random')
-

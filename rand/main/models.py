@@ -11,12 +11,13 @@ class Topics(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now_add=True)
     date_watched = models.DateTimeField(auto_now=True, blank=True)
-    is_watched = models.BooleanField(default=False)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    is_watched = models.BooleanField(default=False, editable=False)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, editable=False)
 
     class Meta:
         verbose_name = 'topic'
         verbose_name_plural = 'topics'
+        ordering = ['author', 'date_created']
 
     def __str__(self):
         if self.subtitle:
