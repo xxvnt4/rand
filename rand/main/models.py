@@ -1,5 +1,5 @@
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
 from django.urls import reverse
 
 
@@ -23,7 +23,6 @@ class Topics(models.Model):
         if self.subtitle:
             return f'{self.title} / {self.subtitle}'
         return f'{self.title}'
-
 
     def get_absolute_url(self):
         return reverse('topic_info', kwargs={'id': self.id})

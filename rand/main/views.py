@@ -3,7 +3,7 @@ from random import choice
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from django.core.paginator import Paginator, EmptyPage
+from django.http import Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
@@ -12,16 +12,23 @@ from django.views.generic import ListView
 from .forms import LoginForm, SignupForm, TopicsForm, UserForm
 from .models import Topics
 
+
 class TopicsList(ListView):
     model = Topics
     template_name = 'main/user_list.html'
     context_object_name = 'topics'
     paginate_by = 10
+    allow_empty = False
 
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(**kwargs)
+    def get_queryset(self):
+        return Topics.objects.filter(author=self.request.user)
 
-        return context
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            return super().dispatch(request, *args, **kwargs)
+        except Http404:
+            return redirect('add_topic')
+
 
 def index(request):
     if request.user.is_authenticated:
@@ -110,36 +117,6 @@ def user_signup(request):
 def user_logout(request):
     if request.user.is_authenticated:
         logout(request)
-
-    return redirect('user_login')
-
-
-def user_list(request):
-    if request.user.is_authenticated:
-        topics = Topics.objects.filter(author=request.user).order_by('-date_created')
-
-        if len(topics) == 0:
-            return redirect('add_topic')
-
-        pagination = Paginator(topics, 5)
-        pages_amount = pagination.num_pages
-        pages_num = request.GET.get('page', 1)
-        range_page = pagination.page_range
-
-        try:
-            page = pagination.page(pages_num)
-        except EmptyPage:
-            page = pagination.page(1)
-
-        return render(
-            request,
-            'main/user_list.html',
-            {
-                'topics': page,
-                'pages_amount': pages_amount,
-                'range_page': range_page
-            }
-        )
 
     return redirect('user_login')
 
