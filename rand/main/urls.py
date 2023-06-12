@@ -1,7 +1,7 @@
 from django.urls import path, re_path
 
 from . import views
-from .views import TopicsList
+from .views import TopicsList, TopicInfoView
 
 
 urlpatterns = [
@@ -24,7 +24,7 @@ urlpatterns += [
 ]
 
 urlpatterns += [
-    re_path(r'^topic_info/(?P<id>\d+)/$', views.topic_info, name='topic_info'),
+    re_path(r'^topic_info/(?P<pk>\d+)/$', views.TopicInfoView.as_view(), name='topic_info'),
     re_path(r'^edit_topic/(?P<id>\d+)/$', views.edit_topic, name='edit_topic'),
     re_path(r'^confirm_delete_topic/(?P<id>\d+)/$', views.confirm_delete_topic, name='confirm_delete_topic'),
     re_path(r'^delete_topic/(?P<id>\d+)/$', views.delete_topic, name='delete_topic'),

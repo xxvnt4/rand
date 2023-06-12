@@ -27,7 +27,7 @@ Are you sure?
     <input type="button" value="YES">
 </a>
 
-<a href="{% url 'topic_info' id=topic.id %}">
+<a href="{{ topic.get_absolute_url }}">
     <input type="button" value="NO">
 </a> <br> <br> <br>
 

@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.http import Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.views import generic
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView
 
@@ -22,6 +23,18 @@ class TopicsList(ListView):
 
     def get_queryset(self):
         return Topics.objects.filter(author=self.request.user)
+
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            return super().dispatch(request, *args, **kwargs)
+        except Http404:
+            return redirect('add_topic')
+
+
+class TopicInfoView(generic.DetailView):
+    model = Topics
+    template_name = 'main/topic_info.html'
+    context_object_name = 'topic'
 
     def dispatch(self, request, *args, **kwargs):
         try:
@@ -173,18 +186,7 @@ def random(request):
     return redirect('user_login')
 
 
-def topic_info(request, id):
-    if request.user.is_authenticated:
-        topic = Topics.objects.filter(id=id)[0]
-        return render(
-            request,
-            'main/topic_info.html',
-            {
-                'topic': topic
-            }
-        )
 
-    return redirect('user_login')
 
 
 @csrf_exempt
@@ -208,7 +210,8 @@ def edit_topic(request, id):
             'main/edit_topic.html',
             {
                 'id': id,
-                'form': form
+                'form': form,
+                'topic': topic
             }
         )
 

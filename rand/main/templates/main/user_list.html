@@ -2,13 +2,13 @@ LIST <br> <br> <br>
 
 {% if is_paginated %}
     {% for page in paginator.page_range %}
-        <a href="{% url 'user_list' %}?page={{ page }}">
+        <a href="{{ request.path }}?page={{ page }}">
             <input type="button" value="{{ page }}">
         </a>
     {% endfor %}
 
     {% if page_obj.has_previous %}
-        <a href="{% url 'user_list' %}?page={{ page_obj.previous_page_number }}">
+        <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">
             <input type="button" value="PREVIOUS">
         </a>
 
@@ -18,7 +18,7 @@ LIST <br> <br> <br>
     {% endif %}
 
     {% if page_obj.has_next %}
-        <a href="{% url 'user_list' %}?page={{ page_obj.next_page_number }}">
+        <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">
             <input type="button" value="NEXT"> <br> <br> <br>
         </a>
     {% endif %}

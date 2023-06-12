@@ -25,4 +25,4 @@ class Topics(models.Model):
         return f'{self.title}'
 
     def get_absolute_url(self):
-        return reverse('topic_info', kwargs={'id': self.id})
+        return reverse('topic_info', kwargs={'pk': self.pk})
