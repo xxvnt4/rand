@@ -4,21 +4,21 @@ from django.contrib.auth.models import User
 from .models import Topics
 
 
-class LoginForm(forms.Form):
-    username = forms.CharField(
-        widget=forms.TextInput(
-            attrs={
-                'placeholder': 'USERNAME'
-            }
-        )
-    )
-    password = forms.CharField(
-        widget=forms.PasswordInput(
-            attrs={
-                'placeholder': 'PASSWORD'
-            }
-        )
-    )
+# class LoginForm(forms.Form):
+#    username = forms.CharField(
+#        widget=forms.TextInput(
+#            attrs={
+#                'placeholder': 'USERNAME'
+#            }
+#        )
+#    )
+#    password = forms.CharField(
+#        widget=forms.PasswordInput(
+#            attrs={
+#                'placeholder': 'PASSWORD'
+#            }
+#        )
+#    )
 
 
 class SignupForm(forms.ModelForm):

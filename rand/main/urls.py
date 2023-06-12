@@ -1,11 +1,12 @@
-from django.urls import path, re_path
+from django.template.backends import django
+from django.urls import path, re_path, include
 
 from . import views
 from .views import TopicsList, TopicInfoView
 
 
 urlpatterns = [
-    path('login/', views.user_login, name='user_login'),
+    # path('login/', views.user_login, name='user_login'),
     path('signup/', views.user_signup, name='user_signup'),
     path('logout/', views.user_logout, name='user_logout'),
 ]
@@ -28,4 +29,8 @@ urlpatterns += [
     re_path(r'^edit_topic/(?P<id>\d+)/$', views.edit_topic, name='edit_topic'),
     re_path(r'^confirm_delete_topic/(?P<id>\d+)/$', views.confirm_delete_topic, name='confirm_delete_topic'),
     re_path(r'^delete_topic/(?P<id>\d+)/$', views.delete_topic, name='delete_topic'),
+]
+
+urlpatterns += [
+    path('accounts/', include('django.contrib.auth.urls')),
 ]

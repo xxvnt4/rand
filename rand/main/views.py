@@ -10,7 +10,7 @@ from django.views import generic
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView
 
-from .forms import LoginForm, SignupForm, TopicsForm, UserForm
+from .forms import SignupForm, TopicsForm, UserForm
 from .models import Topics
 
 
@@ -50,51 +50,51 @@ def index(request):
     return redirect('user_login')
 
 
-def user_login(request):
-    if request.user.is_authenticated:
-        return redirect('index')
-    else:
-        if request.method == 'POST':
-            form = LoginForm(request.POST)
-            if form.is_valid():
-                cd = form.cleaned_data
-                user = authenticate(
-                    username=cd['username'],
-                    password=cd['password']
-                )
-                if user is not None:
-                    login(request, user)
-                    return redirect('index')
-                else:
-                    form = LoginForm()
-                    return render(
-                        request,
-                        'main/user_login.html',
-                        {
-                            'form': form,
-                            'disabled': 1
-                        }
-                    )
-            else:
-                form = LoginForm()
-                return render(
-                    request,
-                    'main/user_login.html',
-                    {
-                        'form': form,
-                        'disabled': 2
-                    }
-                )
-        else:
-            form = LoginForm()
-        return render(
-            request,
-            'main/user_login.html',
-            {
-                'form': form,
-                'disabled': ''
-            }
-        )
+# def user_login(request):
+#    if request.user.is_authenticated:
+#        return redirect('index')
+#    else:
+#        if request.method == 'POST':
+#            form = LoginForm(request.POST)
+#            if form.is_valid():
+#                cd = form.cleaned_data
+#                user = authenticate(
+#                    username=cd['username'],
+#                    password=cd['password']
+#                )
+#                if user is not None:
+#                    login(request, user)
+#                    return redirect('index')
+#                else:
+#                    form = LoginForm()
+#                    return render(
+#                        request,
+#                        'main/user_login.html',
+#                        {
+#                            'form': form,
+#                            'disabled': 1
+#                        }
+#                    )
+#            else:
+#                form = LoginForm()
+#                return render(
+#                    request,
+#                    'main/user_login.html',
+#                    {
+#                        'form': form,
+#                        'disabled': 2
+#                    }
+#                )
+#        else:
+#            form = LoginForm()
+#        return render(
+#            request,
+#            'main/user_login.html',
+#            {
+#                'form': form,
+#                'disabled': ''
+#            }
+#        )
 
 
 def user_signup(request):
@@ -128,10 +128,10 @@ def user_signup(request):
 
 
 def user_logout(request):
-    if request.user.is_authenticated:
-        logout(request)
+   if request.user.is_authenticated:
+       logout(request)
 
-    return redirect('user_login')
+   return redirect('login')
 
 
 @csrf_exempt

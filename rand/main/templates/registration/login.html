@@ -1,0 +1,35 @@
+LOGIN <br> <br> <br>
+
+{% if form.errors %}
+    Your username and password didn't match. Please try again.
+{% endif %}
+
+{% if next %}
+    {% if user.is_authenticated %}
+        Your account doesn't have access to this page. To proceed,
+        please login with an account that has access.
+    {% else %}
+        Please login to see this page.
+    {% endif %}
+{% endif %}
+
+<form method="POST" action="{% url 'login' %}">
+    {% csrf_token %}
+
+    {{ form.username.label_tag }} <br>
+    {{ form.username }} <br> <br>
+
+    {{ form.password.label_tag }} <br>
+    {{ form.password }} <br> <br>
+
+    <input type="submit" value="LOGIN"> <br> <br> <br>
+    <input type="hidden" name="next" value="{{ next }}">
+
+    <a href="{% url 'user_signup' %}">
+        <input type="button" value="NO ACCOUNT YET?">
+    </a> <br>
+
+    <a href="{% url 'password_reset' %}">
+        <input type="button" value="LOST PASSWORD?">
+    </a>
+</form>
