@@ -11,12 +11,18 @@ from django.views import generic
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, FormView
 
-from .forms import SignupForm, TopicsForm, UserForm
+from .forms import TopicsForm, UserForm, SignUpForm
 from .models import Topics
 
 
 class LoginView(FormView):
     success_url = reverse_lazy('index')
+
+
+class MyLogoutView(LogoutView):
+    def dispatch(self, request, *args, **kwargs):
+        response = super().dispatch(request, *args, **kwargs)
+        return redirect('login')
 
 
 class TopicsList(ListView):
@@ -56,12 +62,12 @@ def index(request):
 
 
 
-def user_signup(request):
+def signup(request):
     if request.user.is_authenticated:
         return redirect('index')
     else:
         if request.method == 'POST':
-            form = SignupForm(request.POST)
+            form = SignUpForm(request.POST)
             if form.is_valid():
                 new_user = form.save(commit=False)
                 new_user.set_password(form.cleaned_data['password'])
@@ -75,11 +81,11 @@ def user_signup(request):
                 login(request, user)
                 return redirect('index')
         else:
-            form = SignupForm()
+            form = SignUpForm()
 
         return render(
             request,
-            'main/user_signup.html',
+            'registration/signup.html',
             {
                 'form': form
             }
@@ -111,7 +117,7 @@ def add_topic(request):
             }
         )
 
-    return redirect('user_login')
+    return redirect('login')
 
 
 def random(request):
@@ -135,7 +141,7 @@ def random(request):
 
         return redirect(reverse('topic_info', args=[random_id]))
 
-    return redirect('user_login')
+    return redirect('login')
 
 
 
@@ -167,7 +173,7 @@ def edit_topic(request, id):
             }
         )
 
-    return redirect('user_login')
+    return redirect('login')
 
 
 def confirm_delete_topic(request, id):
@@ -180,7 +186,7 @@ def confirm_delete_topic(request, id):
             {'topic': topic}
         )
 
-    return redirect('user_login')
+    return redirect('login')
 
 
 def delete_topic(request, id):
@@ -190,14 +196,14 @@ def delete_topic(request, id):
 
         return redirect('user_list')
 
-    return redirect('user_login')
+    return redirect('login')
 
 
 def settings(request):
     if request.user.is_authenticated:
         return render(request, 'main/settings.html')
 
-    return redirect('user_login')
+    return redirect('login')
 
 
 def change_username(request):
@@ -222,14 +228,14 @@ def change_username(request):
                 'form': form
             }
         )
-    return redirect('user_login')
+    return redirect('login')
 
 
 def confirm_delete_profile(request):
     if request.user.is_authenticated:
         return render(request, 'main/confirm_delete_profile.html')
 
-    return redirect('user_login')
+    return redirect('login')
 
 
 def delete_profile(request):
@@ -237,7 +243,7 @@ def delete_profile(request):
         user = User.objects.get(username=request.user)
         user.delete()
 
-    return redirect('user_login')
+    return redirect('login')
 
 
 def confirm_reset_random(request):
