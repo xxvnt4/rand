@@ -2,16 +2,21 @@ from datetime import datetime
 from random import choice
 
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.http import Http404
 from django.shortcuts import redirect, render
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views import generic
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import ListView
+from django.views.generic import ListView, FormView
 
 from .forms import SignupForm, TopicsForm, UserForm
 from .models import Topics
+
+
+class LoginView(FormView):
+    success_url = reverse_lazy('index')
 
 
 class TopicsList(ListView):
@@ -47,7 +52,7 @@ def index(request):
     if request.user.is_authenticated:
         return render(request, 'main/index.html')
 
-    return redirect('user_login')
+    return redirect('login')
 
 
 # def user_login(request):

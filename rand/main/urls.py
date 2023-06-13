@@ -32,5 +32,5 @@ urlpatterns += [
 ]
 
 urlpatterns += [
-    path('accounts/', include('django.contrib.auth.urls')),
+    path('accounts/', include('django.contrib.auth.urls'), name='login'),
 ]
