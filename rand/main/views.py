@@ -1,9 +1,9 @@
 from datetime import datetime
 from random import choice
 
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
+from django.contrib.auth.views import LogoutView
 from django.http import Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
@@ -55,52 +55,6 @@ def index(request):
     return redirect('login')
 
 
-# def user_login(request):
-#    if request.user.is_authenticated:
-#        return redirect('index')
-#    else:
-#        if request.method == 'POST':
-#            form = LoginForm(request.POST)
-#            if form.is_valid():
-#                cd = form.cleaned_data
-#                user = authenticate(
-#                    username=cd['username'],
-#                    password=cd['password']
-#                )
-#                if user is not None:
-#                    login(request, user)
-#                    return redirect('index')
-#                else:
-#                    form = LoginForm()
-#                    return render(
-#                        request,
-#                        'main/user_login.html',
-#                        {
-#                            'form': form,
-#                            'disabled': 1
-#                        }
-#                    )
-#            else:
-#                form = LoginForm()
-#                return render(
-#                    request,
-#                    'main/user_login.html',
-#                    {
-#                        'form': form,
-#                        'disabled': 2
-#                    }
-#                )
-#        else:
-#            form = LoginForm()
-#        return render(
-#            request,
-#            'main/user_login.html',
-#            {
-#                'form': form,
-#                'disabled': ''
-#            }
-#        )
-
 
 def user_signup(request):
     if request.user.is_authenticated:
@@ -130,13 +84,6 @@ def user_signup(request):
                 'form': form
             }
         )
-
-
-def user_logout(request):
-   if request.user.is_authenticated:
-       logout(request)
-
-   return redirect('login')
 
 
 @csrf_exempt

@@ -1,14 +1,13 @@
 from django.template.backends import django
 from django.urls import path, re_path, include
+from django.contrib.auth import views as auth_views
 
 from . import views
 from .views import TopicsList, TopicInfoView
 
 
 urlpatterns = [
-    # path('login/', views.user_login, name='user_login'),
     path('signup/', views.user_signup, name='user_signup'),
-    path('logout/', views.user_logout, name='user_logout'),
 ]
 
 urlpatterns += [
@@ -32,5 +31,6 @@ urlpatterns += [
 ]
 
 urlpatterns += [
-    path('accounts/', include('django.contrib.auth.urls'), name='login'),
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('logout/', auth_views.LogoutView.as_view(next_page='/accounts/login/'), name='logout'),
 ]
