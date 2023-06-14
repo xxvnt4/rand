@@ -6,18 +6,18 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LogoutView
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views import generic
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import ListView, FormView
+from django.views.generic import ListView, FormView, CreateView, UpdateView, DeleteView
 
 from .forms import TopicsForm, UserForm, SignUpForm
 from .models import Topics
 
 
-class LoginView(LoginRequiredMixin, FormView):
+class LoginView(FormView):
     success_url = reverse_lazy('index')
 
 
@@ -27,7 +27,7 @@ class MyLogoutView(LogoutView):
         return redirect('login')
 
 
-class TopicsList(ListView):
+class TopicsList(LoginRequiredMixin, ListView):
     model = Topics
     template_name = 'main/user_list.html'
     context_object_name = 'topics'
@@ -115,6 +115,35 @@ def add_topic(request):
             'form': form
         }
     )
+
+
+class TopicsCreate(LoginRequiredMixin, CreateView):
+    model = Topics
+    form_class = TopicsForm
+    template_name = 'main/add_topic.html'
+    success_url = reverse_lazy('user_list')
+
+    def form_valid(self, form):
+        object = form.save(commit=False)
+        object.author = self.request.user
+        object.save()
+
+        return super().form_valid(form)
+
+class TopicsUpdate(LoginRequiredMixin, UpdateView):
+    model = Topics
+    fields = [
+        'title',
+        'subtitle',
+        'description',
+        'link'
+    ]
+    template_name = 'main/edit_topic.html'
+
+
+class TopicsDelete(LoginRequiredMixin, DeleteView):
+    model = Topics
+    success_url = reverse_lazy('user_list')
 
 
 @login_required
