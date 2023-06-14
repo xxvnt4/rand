@@ -14,6 +14,8 @@ from django.views.generic import ListView, FormView
 from .forms import TopicsForm, UserForm, SignUpForm
 from .models import Topics
 
+from django.contrib.auth.decorators import login_required
+
 
 class LoginView(FormView):
     success_url = reverse_lazy('index')
@@ -54,47 +56,42 @@ class TopicInfoView(generic.DetailView):
             return redirect('add_topic')
 
 
+@login_required
 def index(request):
-    if request.user.is_authenticated:
-        return render(request, 'main/index.html')
-
-    return redirect('login')
+    return render(request, 'main/index.html')
 
 
-
+@login_required
 def signup(request):
-    if request.user.is_authenticated:
-        return redirect('index')
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            new_user = form.save(commit=False)
+            new_user.set_password(form.cleaned_data['password'])
+            new_user.save()
+
+            cd = form.cleaned_data
+            user = authenticate(
+                username=cd['username'],
+                password=cd['password']
+            )
+            login(request, user)
+            return redirect('index')
     else:
-        if request.method == 'POST':
-            form = SignUpForm(request.POST)
-            if form.is_valid():
-                new_user = form.save(commit=False)
-                new_user.set_password(form.cleaned_data['password'])
-                new_user.save()
+        form = SignUpForm()
 
-                cd = form.cleaned_data
-                user = authenticate(
-                    username=cd['username'],
-                    password=cd['password']
-                )
-                login(request, user)
-                return redirect('index')
-        else:
-            form = SignUpForm()
-
-        return render(
-            request,
-            'registration/signup.html',
-            {
-                'form': form
-            }
-        )
+    return render(
+        request,
+        'registration/signup.html',
+        {
+            'form': form
+        }
+    )
 
 
 @csrf_exempt
+@login_required
 def add_topic(request):
-    if request.user.is_authenticated:
         if request.method == 'POST':
 
             form = TopicsForm(request.POST)
@@ -117,11 +114,9 @@ def add_topic(request):
             }
         )
 
-    return redirect('login')
 
-
+@login_required
 def random(request):
-    if request.user.is_authenticated:
         topics = Topics.objects.filter(author=request.user)
 
         if len(topics) <= 1:
@@ -141,15 +136,14 @@ def random(request):
 
         return redirect(reverse('topic_info', args=[random_id]))
 
-    return redirect('login')
 
 
 
 
 
 @csrf_exempt
+@login_required
 def edit_topic(request, id):
-    if request.user.is_authenticated:
         topic = Topics.objects.get(id=id)
 
         if request.method == 'POST':
@@ -173,11 +167,9 @@ def edit_topic(request, id):
             }
         )
 
-    return redirect('login')
 
-
+@login_required
 def confirm_delete_topic(request, id):
-    if request.user.is_authenticated:
         topic = Topics.objects.get(id=id)
 
         return render(
@@ -186,28 +178,22 @@ def confirm_delete_topic(request, id):
             {'topic': topic}
         )
 
-    return redirect('login')
 
-
+@login_required
 def delete_topic(request, id):
-    if request.user.is_authenticated:
         topic = Topics.objects.get(id=id)
         topic.delete()
 
         return redirect('user_list')
 
-    return redirect('login')
 
-
+@login_required
 def settings(request):
-    if request.user.is_authenticated:
         return render(request, 'main/settings.html')
 
-    return redirect('login')
 
-
+@login_required
 def change_username(request):
-    if request.user.is_authenticated:
         user = User.objects.get(username=request.user)
 
         if request.method == 'POST':
@@ -228,31 +214,26 @@ def change_username(request):
                 'form': form
             }
         )
-    return redirect('login')
 
-
+@login_required
 def confirm_delete_profile(request):
-    if request.user.is_authenticated:
         return render(request, 'main/confirm_delete_profile.html')
 
-    return redirect('login')
 
-
+@login_required
 def delete_profile(request):
-    if request.user.is_authenticated:
         user = User.objects.get(username=request.user)
         user.delete()
 
-    return redirect('login')
 
-
+@login_required
 def confirm_reset_random(request):
     return render(
         request,
         'main/confirm_reset_random.html'
     )
 
-
+@login_required
 def reset_random(request):
     topics = Topics.objects.all()
 
