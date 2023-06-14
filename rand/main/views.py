@@ -2,6 +2,8 @@ from datetime import datetime
 from random import choice
 
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LogoutView
 from django.http import Http404
@@ -14,10 +16,8 @@ from django.views.generic import ListView, FormView
 from .forms import TopicsForm, UserForm, SignUpForm
 from .models import Topics
 
-from django.contrib.auth.decorators import login_required
 
-
-class LoginView(FormView):
+class LoginView(LoginRequiredMixin, FormView):
     success_url = reverse_lazy('index')
 
 
@@ -56,9 +56,11 @@ class TopicInfoView(generic.DetailView):
             return redirect('add_topic')
 
 
-@login_required
 def index(request):
-    return render(request, 'main/index.html')
+    if request.user.is_authenticated:
+        return render(request, 'main/index.html')
+
+    return redirect('login')
 
 
 @login_required
@@ -92,138 +94,135 @@ def signup(request):
 @csrf_exempt
 @login_required
 def add_topic(request):
-        if request.method == 'POST':
+    if request.method == 'POST':
 
-            form = TopicsForm(request.POST)
+        form = TopicsForm(request.POST)
 
-            if form.is_valid():
-                instance = form.save(commit=False)
-                instance.author = request.user
-                instance.save()
-                return redirect('user_list')
-            else:
-                error = 'Error!'
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.author = request.user
+            instance.save()
+            return redirect('user_list')
+        else:
+            error = 'Error!'
 
-        form = TopicsForm()
+    form = TopicsForm()
 
-        return render(
-            request,
-            'main/add_topic.html',
-            {
-                'form': form
-            }
-        )
+    return render(
+        request,
+        'main/add_topic.html',
+        {
+            'form': form
+        }
+    )
 
 
 @login_required
 def random(request):
-        topics = Topics.objects.filter(author=request.user)
+    topics = Topics.objects.filter(author=request.user)
 
-        if len(topics) <= 1:
-            return redirect('add_topic')
+    if len(topics) <= 1:
+        return redirect('add_topic')
 
-        available_ids = list(Topics.objects.filter(is_watched=False).values_list('id', flat=True))
+    available_ids = list(Topics.objects.filter(is_watched=False).values_list('id', flat=True))
 
-        if len(available_ids) == 0:
-            return redirect('confirm_reset_random')
+    if len(available_ids) == 0:
+        return redirect('confirm_reset_random')
 
-        random_id = choice(available_ids)
+    random_id = choice(available_ids)
 
-        random_topic = Topics.objects.get(id=random_id)
-        random_topic.date_watched = datetime.now()
-        random_topic.is_watched = True
-        random_topic.save()
+    random_topic = Topics.objects.get(id=random_id)
+    random_topic.date_watched = datetime.now()
+    random_topic.is_watched = True
+    random_topic.save()
 
-        return redirect(reverse('topic_info', args=[random_id]))
-
-
-
-
+    return redirect(reverse('topic_info', args=[random_id]))
 
 
 @csrf_exempt
 @login_required
 def edit_topic(request, id):
-        topic = Topics.objects.get(id=id)
+    topic = Topics.objects.get(id=id)
 
-        if request.method == 'POST':
-            form = TopicsForm(request.POST, instance=topic)
-            if form.is_valid():
-                form.save()
-                topic.date_updated = datetime.now()
-                topic.save()
+    if request.method == 'POST':
+        form = TopicsForm(request.POST, instance=topic)
+        if form.is_valid():
+            form.save()
+            topic.date_updated = datetime.now()
+            topic.save()
 
-                return redirect(reverse('topic_info', args=[id]))
+            return redirect(reverse('topic_info', args=[id]))
 
-        form = TopicsForm(instance=topic)
+    form = TopicsForm(instance=topic)
 
-        return render(
-            request,
-            'main/edit_topic.html',
-            {
-                'id': id,
-                'form': form,
-                'topic': topic
-            }
-        )
+    return render(
+        request,
+        'main/edit_topic.html',
+        {
+            'id': id,
+            'form': form,
+            'topic': topic
+        }
+    )
 
 
 @login_required
 def confirm_delete_topic(request, id):
-        topic = Topics.objects.get(id=id)
+    topic = Topics.objects.get(id=id)
 
-        return render(
-            request,
-            'main/confirm_delete.html',
-            {'topic': topic}
-        )
+    return render(
+        request,
+        'main/confirm_delete.html',
+        {'topic': topic}
+    )
 
 
 @login_required
 def delete_topic(request, id):
-        topic = Topics.objects.get(id=id)
-        topic.delete()
+    topic = Topics.objects.get(id=id)
+    topic.delete()
 
-        return redirect('user_list')
+    return redirect('user_list')
 
 
 @login_required
 def settings(request):
-        return render(request, 'main/settings.html')
+    return render(request, 'main/settings.html')
 
 
 @login_required
 def change_username(request):
-        user = User.objects.get(username=request.user)
+    user = User.objects.get(username=request.user)
 
-        if request.method == 'POST':
-            form = UserForm(request.POST, instance=user)
+    if request.method == 'POST':
+        form = UserForm(request.POST, instance=user)
 
-            if form.is_valid():
-                form.save()
-                user.save()
+        if form.is_valid():
+            form.save()
+            user.save()
 
-                return redirect('settings')
+            return redirect('settings')
 
-        form = UserForm(instance=user)
+    form = UserForm(instance=user)
 
-        return render(
-            request,
-            'main/change_username.html',
-            {
-                'form': form
-            }
-        )
+    return render(
+        request,
+        'main/change_username.html',
+        {
+            'form': form
+        }
+    )
+
 
 @login_required
 def confirm_delete_profile(request):
-        return render(request, 'main/confirm_delete_profile.html')
+    return render(request, 'main/confirm_delete_profile.html')
 
 
 @login_required
 def delete_profile(request):
-        user = User.objects.get(username=request.user)
-        user.delete()
+    user = User.objects.get(username=request.user)
+    user.delete()
 
 
 @login_required
@@ -232,6 +231,7 @@ def confirm_reset_random(request):
         request,
         'main/confirm_reset_random.html'
     )
+
 
 @login_required
 def reset_random(request):
