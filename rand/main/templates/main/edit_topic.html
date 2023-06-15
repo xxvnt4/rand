@@ -8,11 +8,13 @@ EDIT TOPIC <br> <br> <br>
   {{ form.description }} <br> <br>
   {{ form.link }} <br> <br>
 
-  <input type="submit" value="SAVE"> <br> <br>
-  <a href="{{ topic.get_absolute_url }}">
+  <input type="submit" value="SAVE"> <br> <br> <br>
+
+  <a href="{{ form.instance.get_absolute_url }}">
     <input type="button" value="BACK">
   </a> <br> <br>
+
   <a href="{% url 'index' %}">
-      <input type="button" value="HOME">
+    <input type="button" value="HOME">
   </a>
 </form>

@@ -27,12 +27,11 @@ Are you sure?
     {% csrf_token %}
 
     <input type="submit" value="YES">
+
+    <a href="{{ topic.get_absolute_url }}">
+        <input type="button" value="NO">
+    </a> <br> <br> <br>
 </form>
-
-
-<a href="{{ topic.get_absolute_url }}">
-    <input type="button" value="NO">
-</a> <br> <br> <br>
 
 <a href="{% url 'index' %}">
     <input type="button" value="HOME">
