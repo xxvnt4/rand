@@ -18,11 +18,11 @@ Created -- {{ topic.date_created }} <br> <br>
 Updated -- {{ topic.date_updated }} <br> <br>
 Watched -- {{ topic.date_watched }} <br> <br> <br>
 
-<a href="{% url 'edit_topic' id=topic.id %}">
+<a href="{% url 'edit_topic' pk=topic.id %}">
     <input type="button" value="EDIT">
 </a> <br> <br>
 
-<a href="{% url 'confirm_delete_topic' id=topic.id %}">
+<a href="{% url 'confirm_delete_topic' pk=topic.id %}">
     <input type="button" value="DELETE">
 </a> <br> <br> <br>
 

@@ -126,8 +126,12 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = '/'
 
-# This variable for email sending test
+LOGIN_URL = 'login'
+# For @login_required decorator
+
+LOGIN_REDIRECT_URL = '/'
+# For success login
+
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# This variable for email sending test

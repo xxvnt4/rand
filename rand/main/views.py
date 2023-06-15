@@ -7,7 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LogoutView
 from django.http import Http404, HttpResponseRedirect
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views import generic
 from django.views.decorators.csrf import csrf_exempt
@@ -131,13 +131,9 @@ class TopicsCreate(LoginRequiredMixin, CreateView):
 
 class TopicsUpdate(LoginRequiredMixin, UpdateView):
     model = Topics
-    fields = [
-        'title',
-        'subtitle',
-        'description',
-        'link'
-    ]
+    form_class = TopicsForm
     template_name = 'main/edit_topic.html'
+    success_url = reverse_lazy('user_list')
 
 
 class TopicsDelete(LoginRequiredMixin, DeleteView):
@@ -195,8 +191,8 @@ def edit_topic(request, id):
 
 
 @login_required
-def confirm_delete_topic(request, id):
-    topic = Topics.objects.get(id=id)
+def confirm_delete_topic(request, pk):
+    topic = Topics.objects.get(id=pk)
 
     return render(
         request,

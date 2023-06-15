@@ -26,8 +26,8 @@ urlpatterns += [
 urlpatterns += [
     re_path(r'^topic_info/(?P<pk>\d+)/$', views.TopicInfoView.as_view(), name='topic_info'),
     re_path(r'^edit_topic/(?P<pk>\d+)/$', views.TopicsUpdate.as_view(), name='edit_topic'),
-    re_path(r'^confirm_delete_topic/(?P<id>\d+)/$', views.confirm_delete_topic, name='confirm_delete_topic'),
-    re_path(r'^delete_topic/(?P<id>\d+)/$', views.TopicsDelete.as_view(), name='delete_topic'),
+    re_path(r'^confirm_delete_topic/(?P<pk>\d+)/$', views.confirm_delete_topic, name='confirm_delete_topic'),
+    re_path(r'^delete_topic/(?P<pk>\d+)/$', views.TopicsDelete.as_view(), name='delete_topic'),
 ]
 
 urlpatterns += [

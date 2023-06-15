@@ -18,14 +18,17 @@ Created -- {{ topic.date_created }} <br> <br>
 Updated -- {{ topic.date_updated }} <br> <br>
 Watched -- {{ topic.date_watched }} <br> <br> <br>
 
-<a href="{% url 'edit_topic' id=topic.id %}">
+<a href="{% url 'edit_topic' pk=topic.id %}">
     <input type="button" value="EDIT">
 </a> <br> <br>
 
 Are you sure?
-<a href="{% url 'delete_topic' id=topic.id %}">
-    <input type="button" value="YES">
-</a>
+<form method="POST" action="{% url 'delete_topic' pk=topic.id %}">
+    {% csrf_token %}
+
+    <input type="submit" value="YES">
+</form>
+
 
 <a href="{{ topic.get_absolute_url }}">
     <input type="button" value="NO">
