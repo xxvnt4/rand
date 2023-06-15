@@ -127,6 +127,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = '/'
 
 # This variable for email sending test
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

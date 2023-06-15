@@ -63,7 +63,6 @@ def index(request):
     return redirect('login')
 
 
-@login_required
 def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
