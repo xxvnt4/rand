@@ -1,14 +1,32 @@
 LIST <br> <br> <br>
 
+SORT: &nbsp
+
+<a href="?sort=title">
+    <input type="button" value="TITLE">
+</a>
+
+<a href="?sort=-title">
+    <input type="button" value="-TITLE">
+</a>
+
+<a href="?sort=date_created">
+    <input type="button" value="DATE">
+</a>
+
+<a href="?sort=-date_created">
+    <input type="button" value="-DATE">
+</a> <br> <br> <br>
+
 {% if is_paginated %}
     {% for page in paginator.page_range %}
-        <a href="{{ request.path }}?page={{ page }}">
+        <a href="{{ request.path }}?page={{ page }}&sort={{ sort_order }}">
             <input type="button" value="{{ page }}">
         </a>
     {% endfor %}
 
     {% if page_obj.has_previous %}
-        <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">
+        <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}&sort={{ sort_order }}">
             <input type="button" value="PREVIOUS">
         </a>
 
@@ -18,7 +36,7 @@ LIST <br> <br> <br>
     {% endif %}
 
     {% if page_obj.has_next %}
-        <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">
+        <a href="{{ request.path }}?page={{ page_obj.next_page_number }}&sort={{ sort_order }}">
             <input type="button" value="NEXT"> <br> <br> <br>
         </a>
     {% endif %}

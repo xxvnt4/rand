@@ -1,11 +1,13 @@
 from datetime import datetime
 from random import choice
+from urllib import request
 
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LogoutView
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse, reverse_lazy
@@ -34,8 +36,43 @@ class TopicsList(LoginRequiredMixin, ListView):
     paginate_by = 10
     allow_empty = False
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        sort_order = self.request.GET.get('sort', 'date_created')
+        queryset = self.get_queryset()
+
+        if sort_order == 'title':
+            queryset = queryset.order_by('title')
+
+        if sort_order == '-title':
+            queryset = queryset.order_by('-title')
+
+        if sort_order == 'date_created':
+            queryset = queryset.order_by('date_created')
+
+        if sort_order == '-date_created':
+            queryset = queryset.order_by('-date_created')
+
+        paginator = Paginator(queryset, self.paginate_by)
+        page = self.request.GET.get('page')
+
+        try:
+            queryset = paginator.page(page)
+        except PageNotAnInteger:
+            queryset = paginator.page(1)
+        except EmptyPage:
+            queryset = paginator.page(paginator.num_pages)
+
+        context['topics'] = queryset
+        context['paginator'] = paginator
+        context['sort_order'] = sort_order
+
+        return context
+
     def get_queryset(self):
-        return Topics.objects.filter(author=self.request.user)
+        return super().get_queryset().filter(author=self.request.user)
+
 
     def dispatch(self, request, *args, **kwargs):
         try:

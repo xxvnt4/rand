@@ -17,7 +17,7 @@ class Topics(models.Model):
     class Meta:
         verbose_name = 'topic'
         verbose_name_plural = 'topics'
-        ordering = ['author', 'date_created']
+        ordering = ['date_created']
 
     def __str__(self):
         if self.subtitle:
