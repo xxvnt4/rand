@@ -1,20 +1,34 @@
 LIST <br> <br> <br>
 
+<form method="GET">
+    {% if search %}
+        <input type="text" name="search" value="{{ search }}" placeholder="SEARCH">
+    {% else %}
+        <input type="text" name="search" value="{{ request.GET.search_text }}" placeholder="SEARCH">
+    {% endif %}
+
+    <input type="submit" value="GO"> &nbsp
+
+    {% if empty_search %}
+        NO TOPICS FOUND!
+    {% endif %}
+</form> <br>
+
 SORT: &nbsp
 
-<a href="?sort=title">
+<a href="?search={{ search }}&sort=title">
     <input type="button" value="TITLE">
 </a>
 
-<a href="?sort=-title">
+<a href="?search={{ search }}&sort=-title">
     <input type="button" value="-TITLE">
 </a>
 
-<a href="?sort=date_created">
+<a href="?search={{ search }}&sort=date_created">
     <input type="button" value="DATE">
 </a>
 
-<a href="?sort=-date_created">
+<a href="?search={{ search }}&sort=-date_created">
     <input type="button" value="-DATE">
 </a> <br> <br> <br>
 

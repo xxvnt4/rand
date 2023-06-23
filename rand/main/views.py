@@ -8,6 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LogoutView
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.db.models import Q
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse, reverse_lazy
@@ -35,6 +36,9 @@ class TopicsList(LoginRequiredMixin, ListView):
     context_object_name = 'topics'
     paginate_by = 10
     allow_empty = False
+
+    empty_search = False
+    search = ''
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -67,11 +71,28 @@ class TopicsList(LoginRequiredMixin, ListView):
         context['topics'] = queryset
         context['paginator'] = paginator
         context['sort_order'] = sort_order
+        context['empty_search'] = self.empty_search
+        context['search'] = self.search
 
         return context
 
     def get_queryset(self):
-        return super().get_queryset().filter(author=self.request.user)
+        search_text = self.request.GET.get('search')
+        self.search = search_text
+        user_topics = self.model.objects.filter(author=self.request.user)
+
+        if search_text:
+            searched_topics = user_topics.filter(
+                    Q(title__icontains=search_text) |
+                    Q(subtitle__icontains=search_text) |
+                    Q(description__icontains=search_text)
+            )
+            if searched_topics:
+                return searched_topics
+            else:
+                self.empty_search = True
+
+        return user_topics
 
 
     def dispatch(self, request, *args, **kwargs):
