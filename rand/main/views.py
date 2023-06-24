@@ -75,6 +75,7 @@ class TopicsList(LoginRequiredMixin, ListView):
         context['empty_search'] = self.empty_search
         context['search'] = self.search
         context['action'] = self.action
+        context['query_string'] = self.request.META['QUERY_STRING']
 
         return context
 
