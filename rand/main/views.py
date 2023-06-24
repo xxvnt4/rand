@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.views import LogoutView
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Q
-from django.http import Http404
+from django.http import Http404, QueryDict, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views import generic
@@ -80,7 +80,17 @@ class TopicsList(LoginRequiredMixin, ListView):
         return context
 
     def get_queryset(self):
-        search_text = self.request.GET.get('search')
+        query_params = QueryDict(mutable=True)
+
+        for key in self.request.GET.keys():
+            values = self.request.GET.getlist(key)
+
+            if len(values) > 1:
+                query_params.setlist(key, [values[-1]])
+            else:
+                query_params[key] = values[0]
+
+        search_text = query_params.get('search')
 
         if search_text:
             self.search = search_text
@@ -99,6 +109,22 @@ class TopicsList(LoginRequiredMixin, ListView):
                 self.empty_search = True
 
         return user_topics
+
+    def get(self, request, *args, **kwargs):
+        query_params = QueryDict(mutable=True)
+        for key in self.request.GET.keys():
+            values = self.request.GET.getlist(key)
+            if len(values) > 1:
+                query_params.setlist(key, [values[-1]])
+            else:
+                query_params[key] = values[0]
+
+        if query_params != self.request.GET:
+            url = request.path + '?' + query_params.urlencode()
+            return HttpResponseRedirect(url)
+
+        return super().get(request, *args, **kwargs)
+
 
     def dispatch(self, request, *args, **kwargs):
         try:
