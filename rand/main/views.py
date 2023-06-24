@@ -80,17 +80,7 @@ class TopicsList(LoginRequiredMixin, ListView):
         return context
 
     def get_queryset(self):
-        query_params = QueryDict(mutable=True)
-
-        for key in self.request.GET.keys():
-            values = self.request.GET.getlist(key)
-
-            if len(values) > 1:
-                query_params.setlist(key, [values[-1]])
-            else:
-                query_params[key] = values[0]
-
-        search_text = query_params.get('search')
+        search_text = self.request.GET.get('search')
 
         if search_text:
             self.search = search_text
