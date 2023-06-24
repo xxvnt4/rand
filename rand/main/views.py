@@ -144,7 +144,15 @@ class TopicInfoView(generic.DetailView):
 
 def index(request):
     if request.user.is_authenticated:
-        return render(request, 'main/index.html')
+        topics_count = Topics.objects.count()
+
+        return render(
+            request,
+            'main/index.html',
+            {
+                'topics_count': topics_count
+            }
+        )
 
     return redirect('login')
 
