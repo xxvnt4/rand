@@ -1,6 +1,5 @@
 from datetime import datetime
 from random import choice
-from urllib import request
 
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
@@ -9,8 +8,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.views import LogoutView
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Q
-from django.http import Http404, HttpResponseRedirect
-from django.shortcuts import redirect, render, get_object_or_404
+from django.http import Http404
+from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views import generic
 from django.views.decorators.csrf import csrf_exempt
@@ -38,13 +37,15 @@ class TopicsList(LoginRequiredMixin, ListView):
     allow_empty = False
 
     empty_search = False
-    search = ''
+    search = None
+    action = None
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         sort_order = self.request.GET.get('sort', 'date_created')
         queryset = self.get_queryset()
+        self.action = self.request.GET.get('action')
 
         if sort_order == 'title':
             queryset = queryset.order_by('title')
@@ -73,19 +74,23 @@ class TopicsList(LoginRequiredMixin, ListView):
         context['sort_order'] = sort_order
         context['empty_search'] = self.empty_search
         context['search'] = self.search
+        context['action'] = self.action
 
         return context
 
     def get_queryset(self):
         search_text = self.request.GET.get('search')
-        self.search = search_text
+
+        if search_text:
+            self.search = search_text
+
         user_topics = self.model.objects.filter(author=self.request.user)
 
         if search_text:
             searched_topics = user_topics.filter(
-                    Q(title__icontains=search_text) |
-                    Q(subtitle__icontains=search_text) |
-                    Q(description__icontains=search_text)
+                Q(title__icontains=search_text) |
+                Q(subtitle__icontains=search_text) |
+                Q(description__icontains=search_text)
             )
             if searched_topics:
                 return searched_topics
@@ -93,7 +98,6 @@ class TopicsList(LoginRequiredMixin, ListView):
                 self.empty_search = True
 
         return user_topics
-
 
     def dispatch(self, request, *args, **kwargs):
         try:
@@ -186,6 +190,7 @@ class TopicsCreate(LoginRequiredMixin, CreateView):
         object.save()
 
         return super().form_valid(form)
+
 
 class TopicsUpdate(LoginRequiredMixin, UpdateView):
     model = Topics

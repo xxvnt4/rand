@@ -16,31 +16,66 @@ LIST <br> <br> <br>
 
 SORT: &nbsp
 
-<a href="?search={{ search }}&sort=title">
+{% if search %}
+    <a href="?search={{ search }}&sort=title">
+{% else %}
+    <a href="?sort=title">
+{% endif %}
     <input type="button" value="TITLE">
 </a>
 
-<a href="?search={{ search }}&sort=-title">
+{% if search %}
+    <a href="?search={{ search }}&sort=-title">
+{% else %}
+    <a href="?sort=-title">
+{% endif %}
     <input type="button" value="-TITLE">
 </a>
 
-<a href="?search={{ search }}&sort=date_created">
+{% if search %}
+    <a href="?search={{ search }}&sort=date_created">
+{% else %}
+    <a href="?sort=date_created">
+{% endif %}
     <input type="button" value="DATE">
 </a>
 
-<a href="?search={{ search }}&sort=-date_created">
+{% if search %}
+    <a href="?search={{ search }}&sort=-date_created">
+{% else %}
+    <a href="?sort=-date_created">
+{% endif %}
     <input type="button" value="-DATE">
 </a> <br> <br> <br>
 
+{% if action %}
+    <a href="?action=">
+        <input type="button" value="CANCEL EDITING"> <br> <br>
+    </a>
+{% else %}
+    <a href="?action=edit">
+        <input type="button" value="EDIT LIST"> <br> <br>
+    </a>
+{% endif %}
+
+
 {% if is_paginated %}
     {% for page in paginator.page_range %}
-        <a href="{{ request.path }}?page={{ page }}&sort={{ sort_order }}">
+        {% if search %}
+            <a href="{{ request.path }}?page={{ page }}&search={{ search }}&sort={{ sort_order }}">
+        {% else %}
+            <a href="{{ request.path }}?page={{ page }}&sort={{ sort_order }}">
+        {% endif %}
             <input type="button" value="{{ page }}">
         </a>
     {% endfor %}
 
     {% if page_obj.has_previous %}
-        <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}&sort={{ sort_order }}">
+        {% if search %}
+            <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}&search={{ search }}&sort={{ sort_order }}">
+        {% else %}
+            <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}&&sort={{ sort_order }}">
+        {% endif %}
             <input type="button" value="PREVIOUS">
         </a>
 
@@ -50,13 +85,21 @@ SORT: &nbsp
     {% endif %}
 
     {% if page_obj.has_next %}
-        <a href="{{ request.path }}?page={{ page_obj.next_page_number }}&sort={{ sort_order }}">
+        {% if search %}
+            <a href="{{ request.path }}?page={{ page_obj.next_page_number }}&search={{ search }}&sort={{ sort_order }}">
+        {% else %}
+            <a href="{{ request.path }}?page={{ page_obj.next_page_number }}&sort={{ sort_order }}">
+        {% endif %}
             <input type="button" value="NEXT"> <br> <br> <br>
         </a>
     {% endif %}
 {% endif %}
 
 {% for topic in topics %}
+    {% if action %}
+        <input type="checkbox">
+    {% endif %}
+
     {% if topic.is_watched %}
         ●
     {% endif %}
