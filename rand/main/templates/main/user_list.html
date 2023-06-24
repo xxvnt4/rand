@@ -32,23 +32,13 @@ SORT: &nbsp
     <input type="button" value="-DATE">
 </a> <br> <br> <br>
 
-{% if action %}
-    <a href="?{{ query_string }}&action=">
-        <input type="button" value="CANCEL EDITING"> <br> <br>
-    </a>
-{% else %}
-    <a href="?{{ query_string }}&action=edit">
-        <input type="button" value="EDIT LIST"> <br> <br>
-    </a>
-{% endif %}
-
 
 {% if is_paginated %}
     {% for page in paginator.page_range %}
         <a href="?{{ query_string }}&page={{ page }}">
             <input type="button" value="{{ page }}">
         </a>
-    {% endfor %}
+    {% endfor %} &nbsp
 
     {% if page_obj.has_previous %}
         <a href="?{{ query_string }}&page={{ page_obj.previous_page_number }}">
@@ -56,30 +46,46 @@ SORT: &nbsp
         </a>
 
         {% if not page_obj.has_next %}
-            <br> <br> <br>
+            <br> <br>
         {% endif %}
     {% endif %}
 
     {% if page_obj.has_next %}
         <a href="?{{ query_string }}&page={{ page_obj.next_page_number }}">
-            <input type="button" value="NEXT"> <br> <br> <br>
+            <input type="button" value="NEXT"> <br> <br>
         </a>
     {% endif %}
 {% endif %}
 
-{% for topic in topics %}
+<form action="{% url 'do_with_selected' %}" method="POST">
+    {% csrf_token %}
+
     {% if action %}
-        <input type="checkbox">
+        <a href="?{{ query_string }}&action=">
+            <input type="button" value="CANCEL EDITING">
+        </a> &nbsp
+
+        <input type="submit" value="DELETE SELECTED TOPICS"> <br> <br> <br>
+    {% else %}
+        <a href="?{{ query_string }}&action=edit">
+            <input type="button" value="EDIT LIST"> <br> <br> <br>
+        </a>
     {% endif %}
 
-    {% if topic.is_watched %}
-        ●
-    {% endif %}
+    {% for topic in topics %}
+        {% if action %}
+            <input type="checkbox" name="selected_items" value="{{ topic.pk }}">
+        {% endif %}
 
-    <a href="{{ topic.get_absolute_url }}">
-        <input type="button" value="{{ topic }}">
-    </a> <br> <br>
-{% endfor %} <br> <br>
+        {% if topic.is_watched %}
+            ●
+        {% endif %}
+
+        <a href="{{ topic.get_absolute_url }}">
+            <input type="button" value="{{ topic }}">
+        </a> <br> <br>
+    {% endfor %}
+</form> <br> <br>
 
 <a href="{% url 'add_topic' %}">
     <input type="button" value="ADD TOPIC">

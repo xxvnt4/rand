@@ -11,7 +11,7 @@ from django.db.models import Q
 from django.http import Http404, QueryDict, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
-from django.views import generic
+from django.views import generic, View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, FormView, CreateView, UpdateView, DeleteView
 
@@ -121,6 +121,13 @@ class TopicsList(LoginRequiredMixin, ListView):
             return super().dispatch(request, *args, **kwargs)
         except Http404:
             return redirect('add_topic')
+
+class TopicView(View):
+
+    def get(self, request):
+        objects = Topics.objects.all()
+
+        return render()
 
 
 class TopicInfoView(generic.DetailView):
@@ -346,3 +353,14 @@ def reset_random(request):
         topic.save()
 
     return redirect('random')
+
+
+@login_required
+def do_with_selected(request):
+    if request.method == 'POST':
+        selected_items = request.POST.getlist('selected_items')
+        Topics.objects.filter(id__in=selected_items).delete()
+
+        url = reverse('user_list') + '?action=edit'
+
+        return redirect(url)
