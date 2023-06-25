@@ -12,7 +12,7 @@ class Topics(models.Model):
     date_updated = models.DateTimeField(auto_now_add=True)
     date_watched = models.DateTimeField(auto_now=True, blank=True)
     is_watched = models.BooleanField(default=False, editable=False)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, editable=False)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, editable=False, null=True, blank=True)
 
     class Meta:
         verbose_name = 'topic'
