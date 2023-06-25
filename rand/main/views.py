@@ -43,7 +43,7 @@ class TopicsList(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        sort_order = self.request.GET.get('sort', 'date_created')
+        sort_order = self.request.GET.get('sort', '-date_created')
         queryset = self.get_queryset()
         self.action = self.request.GET.get('action')
 
