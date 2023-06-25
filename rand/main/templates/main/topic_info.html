@@ -1,4 +1,12 @@
-TOPIC <br> <br> <br>
+TOPIC <br> <br>
+
+{% if from_random %}
+    <a href="{% url 'random' %}">
+        <input type="button" value="NEXT RANDOM">
+    </a> <br> <br> <br>
+{% endif %}
+
+
 
 {{ topic.title }} <br> <br>
 

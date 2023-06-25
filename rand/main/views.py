@@ -127,6 +127,15 @@ class TopicInfoView(generic.DetailView):
     template_name = 'main/topic_info.html'
     context_object_name = 'topic'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        from_random = self.request.GET.get('from_random', False)
+
+        context['from_random'] = from_random
+
+        return context
+
     def dispatch(self, request, *args, **kwargs):
         try:
             return super().dispatch(request, *args, **kwargs)
@@ -235,7 +244,7 @@ def random(request):
     if len(topics) <= 1:
         return redirect('add_topic')
 
-    available_ids = list(Topics.objects.filter(is_watched=False).values_list('id', flat=True))
+    available_ids = list(topics.filter(is_watched=False).values_list('id', flat=True))
 
     if len(available_ids) == 0:
         return redirect('confirm_reset_random')
@@ -247,7 +256,7 @@ def random(request):
     random_topic.is_watched = True
     random_topic.save()
 
-    return redirect(reverse('topic_info', args=[random_id]))
+    return redirect(reverse('topic_info', args=[random_id]) + '?from_random=True')
 
 
 @csrf_exempt
