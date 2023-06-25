@@ -14,9 +14,12 @@ TOPIC <br> <br> <br>
     {{ topic.link }} <br> <br>
 {% endif %} <br>
 
-Created -- {{ topic.date_created }} <br> <br>
-Updated -- {{ topic.date_updated }} <br> <br>
-Watched -- {{ topic.date_watched }} <br> <br> <br>
+Created: <br>
+{{ topic.date_created|date:"d.m.Y H:i" }} <br> <br>
+Updated: <br>
+{{ topic.date_updated|date:"d.m.Y H:i" }} <br> <br>
+Watched: <br>
+{{ topic.date_watched|date:"d.m.Y H:i" }} <br> <br> <br>
 
 <a href="{% url 'edit_topic' pk=topic.id %}">
     <input type="button" value="EDIT">

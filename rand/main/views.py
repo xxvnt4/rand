@@ -115,19 +115,11 @@ class TopicsList(LoginRequiredMixin, ListView):
 
         return super().get(request, *args, **kwargs)
 
-
     def dispatch(self, request, *args, **kwargs):
         try:
             return super().dispatch(request, *args, **kwargs)
         except Http404:
             return redirect('add_topic')
-
-class TopicView(View):
-
-    def get(self, request):
-        objects = Topics.objects.all()
-
-        return render()
 
 
 class TopicInfoView(generic.DetailView):
@@ -140,6 +132,32 @@ class TopicInfoView(generic.DetailView):
             return super().dispatch(request, *args, **kwargs)
         except Http404:
             return redirect('add_topic')
+
+
+class TopicsCreate(LoginRequiredMixin, CreateView):
+    model = Topics
+    form_class = TopicsForm
+    template_name = 'main/add_topic.html'
+    success_url = reverse_lazy('user_list')
+
+    def form_valid(self, form):
+        object = form.save(commit=False)
+        object.author = self.request.user
+        object.save()
+
+        return super().form_valid(form)
+
+
+class TopicsUpdate(LoginRequiredMixin, UpdateView):
+    model = Topics
+    form_class = TopicsForm
+    template_name = 'main/edit_topic.html'
+    success_url = reverse_lazy('user_list')
+
+
+class TopicsDelete(LoginRequiredMixin, DeleteView):
+    model = Topics
+    success_url = reverse_lazy('user_list')
 
 
 def index(request):
@@ -208,32 +226,6 @@ def add_topic(request):
             'form': form
         }
     )
-
-
-class TopicsCreate(LoginRequiredMixin, CreateView):
-    model = Topics
-    form_class = TopicsForm
-    template_name = 'main/add_topic.html'
-    success_url = reverse_lazy('user_list')
-
-    def form_valid(self, form):
-        object = form.save(commit=False)
-        object.author = self.request.user
-        object.save()
-
-        return super().form_valid(form)
-
-
-class TopicsUpdate(LoginRequiredMixin, UpdateView):
-    model = Topics
-    form_class = TopicsForm
-    template_name = 'main/edit_topic.html'
-    success_url = reverse_lazy('user_list')
-
-
-class TopicsDelete(LoginRequiredMixin, DeleteView):
-    model = Topics
-    success_url = reverse_lazy('user_list')
 
 
 @login_required
