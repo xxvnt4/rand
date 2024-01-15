@@ -17,6 +17,7 @@ urlpatterns += [
     path('random/', views.random, name='random'),
     path('settings/', views.settings, name='settings'),
     path('change_username/', views.change_username, name='change_username'),
+    path('topics_per_page', views.topics_per_page, name='topics_per_page'),
     path('confirm_delete_profile/', views.confirm_delete_profile, name='confirm_delete_profile'),
     path('delete_profile/', views.delete_profile, name='delete_profile'),
     path('confirm_reset_random/', views.confirm_reset_random, name='confirm_reset_random'),

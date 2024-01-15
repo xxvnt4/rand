@@ -15,8 +15,8 @@ from django.views import generic, View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, FormView, CreateView, UpdateView, DeleteView
 
-from .forms import TopicsForm, UserForm, SignUpForm
-from .models import Topics
+from .forms import TopicsForm, UserForm, SignUpForm, SiteConfigurationForm
+from .models import Topics, SiteConfiguration
 
 
 class LoginView(FormView):
@@ -198,6 +198,11 @@ def signup(request):
                 password=cd['password']
             )
             login(request, user)
+
+            SiteConfiguration.parameter = 'topics_per_page'
+            SiteConfiguration.value = '10'
+            SiteConfiguration.save()
+
             return redirect('index')
     else:
         form = SignUpForm()
@@ -328,6 +333,30 @@ def change_username(request):
     return render(
         request,
         'main/change_username.html',
+        {
+            'form': form
+        }
+    )
+
+
+@login_required
+def topics_per_page(request):
+    site_parameter = SiteConfiguration.objects.get(parameter='topics_per_page')
+
+    if request.method == 'POST':
+        form = SiteConfigurationForm(request.POST, instance=site_parameter)
+
+        if form.is_valid():
+            form.save()
+            site_parameter.save()
+
+            return redirect('settings')
+
+    form = SiteConfigurationForm(instance=site_parameter)
+
+    return render(
+        request,
+        'main/topics_per_page.html',
         {
             'form': form
         }

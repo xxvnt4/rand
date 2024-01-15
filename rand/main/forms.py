@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 
-from .models import Topics
+from .models import Topics, SiteConfiguration
 
 
 class SignUpForm(forms.ModelForm):
@@ -112,3 +112,16 @@ class UserForm(forms.ModelForm):
 
     def clean_username(self):
         return self.cleaned_data['username']
+
+
+class SiteConfigurationForm(forms.ModelForm):
+
+    class Meta:
+        model = SiteConfiguration
+        fields = ['value']
+        widgets = {
+            'value': forms.TextInput()
+        }
+
+    def clean_value(self):
+        return self.cleaned_data['value']

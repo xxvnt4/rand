@@ -26,3 +26,8 @@ class Topics(models.Model):
 
     def get_absolute_url(self):
         return reverse('topic_info', kwargs={'pk': self.pk})
+
+
+class SiteConfiguration(models.Model):
+    parameter = models.CharField(max_length=50)
+    value = models.IntegerField()
