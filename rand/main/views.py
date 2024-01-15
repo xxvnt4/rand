@@ -33,9 +33,7 @@ class TopicsList(LoginRequiredMixin, ListView):
     model = Topics
     template_name = 'main/user_list.html'
     context_object_name = 'topics'
-    paginate_by = 10
     allow_empty = False
-
     empty_search = False
     search = None
     action = None
@@ -59,7 +57,8 @@ class TopicsList(LoginRequiredMixin, ListView):
         if sort_order == '-date_created':
             queryset = queryset.order_by('-date_created')
 
-        paginator = Paginator(queryset, self.paginate_by)
+        paginate_by = SiteConfiguration.objects.get(parameter='topics_per_page').value
+        paginator = Paginator(queryset, paginate_by)
         page = self.request.GET.get('page')
 
         try:
@@ -78,6 +77,7 @@ class TopicsList(LoginRequiredMixin, ListView):
         context['query_string'] = self.request.META['QUERY_STRING']
 
         return context
+
 
     def get_queryset(self):
         search_text = self.request.GET.get('search')
